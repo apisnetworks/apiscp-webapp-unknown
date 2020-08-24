@@ -19,6 +19,8 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 	use Auth_Info_User;
 	use ContextableTrait;
 	use Module\Support\Webapps;
+	use Module\Support\Webapps\App\Loader;
+	use Module\Support\Webapps\Git;
 	use Module\Support\Webapps\MetaManager;
 	use NamespaceUtilitiesTrait;
 	use ReflectionClass;
@@ -730,6 +732,16 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 				$update->forceUpdateVersion($version);
 			} else {
 				$update->setAvailableVersions($this->getVersions());
+			}
+
+			$gitHandler = Git::instantiateContexted($this->getAuthContext(), [
+				$this->getAppRoot(),
+				$this->meta
+			]);
+
+			if ($gitHandler->enabled()) {
+				$update->enableAssuranceMode(true);
+				$update->initializeAssurance($gitHandler);
 			}
 
 			return $update->process();
