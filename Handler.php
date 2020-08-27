@@ -122,7 +122,12 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 				$this->getAuthContext(),
 				[$this]
 			);
-			$this->mapping = $this->getManifest()['base'];
+			$base = $this->getManifest()['base'];
+			if (null !== $base && !\in_array($base, Webapps::knownApps(), true)) {
+				warn("Unknown app type `%s', ignoring manifest override", $base);
+				$base = null;
+			}
+			$this->mapping = $base;
 		}
 
 		/**
