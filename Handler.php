@@ -192,9 +192,19 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function getModuleName(): string
 		{
-			$name = strtolower(basename(strtr(static::getNamespace(\get_class($this)), '\\', '/')));
+			$name = $this->getHandlerName();
 
 			return $name === 'unknown' ? 'webapp' : $name;
+		}
+
+		/**
+		 * Get handler name
+		 *
+		 * @return string
+		 */
+		public function getHandlerName(): string
+		{
+			return strtolower(basename(strtr(static::getNamespace(\get_class($this)), '\\', '/')));
 		}
 
 		/**
@@ -1031,7 +1041,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			if (static::class === self::class) {
 				return null;
 			}
-			$parent = get_parent_class($this);
+			$parent = substr($tmp = get_parent_class($this), 0, strrpos($tmp, '\\'));
 
 			return strtolower(substr($parent, strrpos($parent, '\\') + 1));
 		}
