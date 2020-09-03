@@ -26,4 +26,9 @@
 			}
 			return \is_bool($val);
 		}
+
+		public function getValue()
+		{
+			return parent::getValue() ?? true;
+		}
 	}
