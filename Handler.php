@@ -831,14 +831,11 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function releaseFortify()
 		{
-			if (($mapping = $this->getClassMapping()) === 'webapp' && !$this->hasManifest()) {
-				return false;
-			}
-			if ($mapping === 'unknown') {
+			if ('unknown' === ($mapping = $this->getClassMapping())) {
 				$mapping = 'webapp';
 			}
 
-			return !empty($this->{$mapping . '_unfortify'}($this->getHostname(), $this->getPath()));
+			return $this->{$mapping . '_unfortify'}($this->getHostname(), $this->getPath());
 		}
 
 		/**
