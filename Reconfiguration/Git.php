@@ -36,6 +36,20 @@
 				return $git->remove();
 			}
 
+			$this->callback(function () {
+				$hostname = $this->app->getHostname();
+				$path = $this->app->getPath();
+				$approot = $this->app->getAppRoot($hostname, $path);
+				$docroot = $this->app->getDocumentRoot($hostname, $path);
+				$git = \Module\Support\Webapps\Git::instantiateContexted(
+					$this->getAuthContext(), [
+						$approot,
+						MetaManager::factory($this->getAuthContext())->get($docroot)
+					]
+				);
+				$git->createRepository() && $git->snapshot(_('Initial install'));
+			});
+
 			return $git->createRepository() && $git->snapshot(_('Initial install'));
 
 		}
