@@ -50,7 +50,7 @@
 				$git->createRepository() && $git->snapshot(_('Initial install'));
 			});
 
-			return $git->createRepository() && $git->snapshot(_('Initial install'));
+			return true;
 
 		}
 	}
