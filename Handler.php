@@ -19,7 +19,6 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 	use Auth_Info_User;
 	use ContextableTrait;
 	use Module\Support\Webapps;
-	use Module\Support\Webapps\App\Loader;
 	use Module\Support\Webapps\Git;
 	use Module\Support\Webapps\MetaManager;
 	use NamespaceUtilitiesTrait;
@@ -998,7 +997,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		public function setOption($opt, $val = null): bool
 		{
 			// ignore
-			if (isset(static::TRANSIENT_RECONFIGURABLES[$opt])) {
+			if (\in_array($opt, static::TRANSIENT_RECONFIGURABLES, true)) {
 				return true;
 			}
 
