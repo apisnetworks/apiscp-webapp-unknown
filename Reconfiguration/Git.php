@@ -37,10 +37,8 @@
 			}
 
 			$this->callback(function () {
-				$hostname = $this->app->getHostname();
-				$path = $this->app->getPath();
-				$approot = $this->app->getAppRoot($hostname, $path);
-				$docroot = $this->app->getDocumentRoot($hostname, $path);
+				$approot = $this->app->getAppRoot();
+				$docroot = $this->app->getDocumentRoot();
 				$git = \Module\Support\Webapps\Git::instantiateContexted(
 					$this->getAuthContext(), [
 						$approot,
@@ -51,6 +49,12 @@
 			});
 
 			return true;
+		}
 
+		public function rollback(): self
+		{
+			$val = false;
+			$this->handle($val);
+			return $this;
 		}
 	}
