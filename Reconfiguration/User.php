@@ -25,11 +25,17 @@
 			$path = $this->app->getPath();
 
 			$approot = $this->app->getAppRoot();
-			$olduser = array_get($this->file_stat($approot), 'owner') ?: $this->getAuthContext()->username;
+			$stat = $this->file_stat($approot);
+			$olduser = array_get($stat, 'owner') ?: $this->getAuthContext()->username;
 			if ($olduser === $val) {
 				// no change
 				return true;
 			}
+
+			if ($stat['file_type'] === 'link') {
+				$this->file_chown_symlink($approot, $val);
+			}
+
 			$ret = $this->file_takeover_user($olduser, $val, $approot);
 			if (!$path && $this->web_is_subdomain($hostname)) {
 				// update subdomain symlink ownership otherwise FollowSymLinksIfOwnerMatches pukes
