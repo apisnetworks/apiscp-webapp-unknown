@@ -533,11 +533,14 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function reconfigure(array $params): bool
 		{
-			return $this->{$this->getClassMapping() . '_reconfigure'}(
+			$ret = $this->{$this->getClassMapping() . '_reconfigure'}(
 				$this->getHostname(),
 				$this->getPath(),
 				$params
 			);
+			gc_collect_cycles();
+
+			return $ret;
 		}
 
 		/**
