@@ -101,7 +101,11 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			$docroot = $docroot ?: \a23r::get_class_from_module('web')::MAIN_DOC_ROOT;
 
 			if (null === ($components = $this->web_extract_components_from_path($docroot))) {
-				fatal("Cannot determine hostname from filesystem path `%s' - is this reachable by web?", $docroot);
+				// path is symlinked, use domain/path as established in UI
+				$components = ['host' => $this->meta['hostname'], 'path' => ($this->meta['path'] ?? '')];
+				if (empty($components['host'])) {
+					fatal("Cannot determine hostname from filesystem path `%s' - is this reachable by web?", $docroot);
+				}
 			}
 			if (empty($this->meta['hostname']) || (string)($this->meta['path'] ?? '') !== $components['path']) {
 				$this->meta->replace($components);
@@ -231,7 +235,8 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function getDocumentMetaPath(): string
 		{
-			return $this->getDocumentRoot();
+			$stat = $this->file_stat($this->getDocumentRoot());
+			return $stat['referent'] ?: $this->docroot;
 		}
 
 		/**
