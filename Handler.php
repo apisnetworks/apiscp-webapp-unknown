@@ -77,8 +77,8 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		/**
 		 * Create new app type for docroot
 		 *
-		 * @param string|null         $docroot
-		 * @param Auth_Info_User|null $ctx
+		 * @param string|null    $docroot
+		 * @param Auth_Info_User $ctx
 		 * @return static
 		 */
 		public static function factory(?string $docroot, Auth_Info_User $ctx)
@@ -236,6 +236,9 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		public function getDocumentMetaPath(): string
 		{
 			$stat = $this->file_stat($this->getDocumentRoot());
+			if (!$stat) {
+				return $this->docroot;
+			}
 			return $stat['referent'] ?: $this->docroot;
 		}
 
