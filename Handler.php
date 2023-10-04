@@ -235,11 +235,12 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function getDocumentMetaPath(): string
 		{
-			$stat = $this->file_stat($this->getDocumentRoot());
+			$stat = $this->file_stat($path = $this->getDocumentRoot());
 			if (!$stat) {
-				return $this->docroot;
+				return $path;
 			}
-			return $stat['referent'] ?: $this->docroot;
+
+			return $stat['referent'] ?: $path;
 		}
 
 		/**
