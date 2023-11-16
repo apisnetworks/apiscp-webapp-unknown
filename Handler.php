@@ -21,6 +21,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 	use Module\Support\Webapps;
 	use Module\Support\Webapps\Git;
 	use Module\Support\Webapps\MetaManager;
+	use Module\Support\Webapps\Traits\PublicRelocatable;
 	use NamespaceUtilitiesTrait;
 	use ReflectionClass;
 	use Session;
@@ -34,20 +35,27 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		use apnscpFunctionInterceptorTrait;
 		use ContextableTrait;
 
+		use PublicRelocatable {
+			getAppRoot as getAppRootReal;
+		}
+
 		const NAME = 'unknown';
 		const ADMIN_PATH = '';
 		const FEAT_ALLOW_SSL = false;
 		const FEAT_RECOVERY = false;
 		const FEAT_GIT = true;
 		const DEFAULT_FORTIFICATION = 'max';
+		const APP_ROOT_DEPTH = 0;
+
 		// @var array options not saved on reconfiguration
 		const TRANSIENT_RECONFIGURABLES = [
 			'migrate'
 		];
 
-		protected $hostname;
-		protected $docroot;
-		protected $path = '';
+		protected string $hostname;
+		protected ?string $docroot;
+		protected string $path = '';
+		protected ?string $approot;
 
 		/**
 		 * @var MetaManager\Meta application meta info
@@ -68,7 +76,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		/**
 		 * @var Adhoc\Manifest
 		 */
-		protected $manifest;
+		protected ?Webapps\App\Type\Adhoc\Manifest $manifest = null;
 		/**
 		 * @var Webapps\App\UIPanel\Element
 		 */
@@ -92,6 +100,11 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			if ($docroot === null) {
 				return;
 			}
+
+			$this->manifest = Webapps\App\Type\Adhoc\Manifest::instantiateContexted(
+				$this->getAuthContext(),
+				[$this]
+			);
 
 			$this->manager = MetaManager::factory($this->getAuthContext());
 
@@ -121,10 +134,6 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			if (!isset($this->options['user'])) {
 				$this->options['user'] = $stat['owner'] ?? Session::get('username');
 			}
-			$this->manifest = Webapps\App\Type\Adhoc\Manifest::instantiateContexted(
-				$this->getAuthContext(),
-				[$this]
-			);
 
 			if ($this->manifest->exists()) {
 				$base = $this->getManifest()['base'];
@@ -132,8 +141,11 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 					warn("Unknown app type `%s', ignoring manifest override", $base);
 					$base = null;
 				}
+				$this->depth = $this->getManifest()['depth'];
 				$this->mapping = $base;
 			}
+
+			$this->depth ??= static::APP_ROOT_DEPTH;
 		}
 
 		/**
@@ -321,7 +333,11 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function getAppRoot(): ?string
 		{
-			return $this->docroot;
+			if (isset($this->approot)) {
+				return $this->approot;
+			}
+
+			return $this->approot = $this->getAppRootReal($this->hostname, $this->path);
 		}
 
 		/**
