@@ -454,10 +454,14 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		protected function moduleHas(string $func): bool
 		{
-			$module = $this->reflectModule($this->getClassMapping());
+			if (null === ($module = $this->reflectModule($this->getClassMapping()))) {
+				fatal("Unable to locate module implementation for %s", $this->getClassMapping());
+			}
+
 			if ($module->getName() === \Webapp_Module::class) {
 				return false;
 			}
+
 			return $module->hasMethod($func) &&
 				$module->getMethod($func)->getDeclaringClass()->getName() === $module->getName() && !$module->isAbstract();
 		}
