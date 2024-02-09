@@ -129,7 +129,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			}
 			$this->setHostname($this->meta['hostname']);
 			$this->setPath($this->meta['path'] ?? '');
-			$stat = $this->file_stat($this->getAppRoot());
+			$stat = $this->file_stat((string)$this->getAppRoot());
 			$this->options = $this->meta->getOptions();
 			if (!isset($this->options['user'])) {
 				$this->options['user'] = $stat['owner'] ?? Session::get('username');
@@ -622,7 +622,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 */
 		public function hasGit(): bool
 		{
-			return $this->git_valid($this->getAppRoot());
+			return $this->git_valid((string)$this->getAppRoot());
 		}
 
 		/**
