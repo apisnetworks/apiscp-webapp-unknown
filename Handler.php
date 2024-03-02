@@ -255,6 +255,12 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			return $stat['referent'] ?: $path;
 		}
 
+		public function refresh(): void
+		{
+			unset($this->approot, $this->docroot);
+			static::__construct($this->getDocumentRoot());
+		}
+
 		/**
 		 * Get document root
 		 *
