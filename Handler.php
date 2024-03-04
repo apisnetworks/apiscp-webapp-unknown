@@ -257,8 +257,12 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 
 		public function refresh(): void
 		{
+			$docroot = $this->getDocumentRoot();
 			unset($this->approot, $this->docroot);
-			static::__construct($this->getDocumentRoot());
+			if (!$this->file_exists($docroot)) {
+				return;
+			}
+			static::__construct($docroot);
 		}
 
 		/**
@@ -951,6 +955,16 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		public function isInstalling(): bool
 		{
 			return isset($this->meta['version']) && $this->meta['version'] === Webapps\App\Installer::INSTALLING_VERSION;
+		}
+
+		/**
+		 * Application failed to install properly
+		 *
+		 * @return bool
+		 */
+		public function installFailed(): bool
+		{
+			return $this->isInstalling();
 		}
 
 		/**
