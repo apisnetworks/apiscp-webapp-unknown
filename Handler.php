@@ -41,7 +41,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 
 		const NAME = 'unknown';
 		const ADMIN_PATH = '';
-		const FEAT_ALLOW_SSL = false;
+		const FEAT_ALLOW_SSL = true;
 		const FEAT_RECOVERY = false;
 		const FEAT_GIT = true;
 		const DEFAULT_FORTIFICATION = 'max';
