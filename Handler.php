@@ -58,10 +58,6 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		protected ?string $approot;
 
 		/**
-		 * @var MetaManager\Meta application meta info
-		 */
-		protected $manager;
-		/**
 		 * @var MetaManager\Options
 		 */
 		protected $options;
@@ -106,10 +102,9 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 				[$this]
 			);
 
-			$this->manager = MetaManager::factory($this->getAuthContext());
 
 			// MetaManager takes care of symlinks
-			$this->meta = $this->manager->get($docroot);
+			$this->meta = MetaManager::factory($this->getAuthContext())->get($docroot);
 			// @todo warn if $docroot irresolvable?
 			$docroot = $docroot ?: \a23r::get_class_from_module('web')::MAIN_DOC_ROOT;
 
@@ -237,7 +232,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 				$docroot = $this->getDocumentMetaPath();
 			}
 
-			return $this->manager->get($docroot)->toArray();
+			return MetaManager::factory($this->getAuthContext())->get($docroot)->toArray();
 		}
 
 		/**
@@ -262,6 +257,8 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			if (!$this->file_exists($docroot)) {
 				return;
 			}
+
+			$this->getVersion(true);
 			static::__construct($docroot);
 		}
 
