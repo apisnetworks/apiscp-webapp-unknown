@@ -252,8 +252,8 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 
 		public function refresh(): void
 		{
-			$docroot = $this->getDocumentRoot();
 			unset($this->approot, $this->docroot);
+			$docroot = $this->getDocumentRoot();
 			if (!$this->file_exists($docroot)) {
 				return;
 			}
