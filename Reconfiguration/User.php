@@ -39,7 +39,7 @@
 			$ret = $this->file_takeover_user($olduser, $val, $approot);
 			if (!$path && $this->web_is_subdomain($hostname)) {
 				// update subdomain symlink ownership otherwise FollowSymLinksIfOwnerMatches pukes
-				$this->file_chown_symlink(\a23r::get_class_from_module('web')::SUBDOMAIN_ROOT . "/${hostname}/html", $val);
+				$this->file_chown_symlink(\a23r::get_class_from_module('web')::SUBDOMAIN_ROOT . "/{$hostname}/html", $val);
 			}
 
 			return (bool)$ret;

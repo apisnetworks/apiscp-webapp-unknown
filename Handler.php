@@ -77,6 +77,10 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 		 * @var Webapps\App\UIPanel\Element
 		 */
 		protected $pane;
+		/**
+		 * @var int|mixed|null
+		 */
+		private int $depth;
 
 		/**
 		 * Create new app type for docroot
@@ -502,7 +506,7 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 			if ('unknown' === ($mapping = $this->getClassMapping())) {
 				$mapping = 'webapp';
 			}
-			return $this->{"${mapping}_get_reconfigurable"}($this->getHostname(), $this->getPath(), $property);
+			return $this->{"{$mapping}_get_reconfigurable"}($this->getHostname(), $this->getPath(), $property);
 		}
 
 		/**
