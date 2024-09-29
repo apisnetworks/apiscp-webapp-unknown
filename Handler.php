@@ -140,8 +140,14 @@ namespace Module\Support\Webapps\App\Type\Unknown;
 					warn("Unknown app type `%s', ignoring manifest override", $base);
 					$base = null;
 				}
-				$this->depth = $this->getManifest()['depth'];
-				$this->mapping = $base;
+
+				if ($this->mapping = $base) {
+					$this->depth = Webapps::handlerFromApplication($base)::APP_ROOT_DEPTH;
+				}
+
+				if (null !== ($depth = $this->getManifest()['depth'] ?? null)) {
+					$this->depth = $depth;
+				}
 			}
 
 			$this->depth ??= static::APP_ROOT_DEPTH;
