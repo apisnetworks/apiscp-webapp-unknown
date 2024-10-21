@@ -15,15 +15,12 @@ namespace Module\Support\Webapps\App\Type\Unknown\Reconfiguration;
 
 use Module\Support\Webapps\App\Reconfigurator;
 use Module\Support\Webapps\Contracts\ReconfigurableProperty;
+use Opcenter\Http\Apache\Maps\HSTS\Mode;
 
 class Ssl extends Reconfigurator implements ReconfigurableProperty
 {
 	public function handle(&$val): bool
 	{
-		if (!$val) {
-			// detach hostname from cert + reissue?
-			return true;
-		}
 		$hostname = $this->app->getHostname();
 		if (false === strpos($hostname, '.')) {
 			$tmp = $this->web_normalize_hostname($hostname);
@@ -31,12 +28,25 @@ class Ssl extends Reconfigurator implements ReconfigurableProperty
 				substr($tmp, \strlen($hostname) + 1));
 			$hostname = $tmp;
 		}
+
+		if (!$val) {
+			$this->web_remove_ssl($hostname);
+			// detach hostname from cert + reissue?
+			return true;
+		}
+
 		if (!$this->letsencrypt_supported() && !$this->ssl_cert_exists()) {
 			return error('SSL not enabled on account');
 		}
 		$certdata = $this->ssl_get_certificates();
 		$cnames = [];
 		if ($this->ssl_contains_cn($hostname)) {
+			$this->web_set_ssl(
+				$hostname,
+				Mode::fromPreference(
+					\Preferences::factory($this->getAuthContext())
+				)->value
+			);
 			return true;
 		}
 		if ($certdata) {
@@ -72,9 +82,13 @@ class Ssl extends Reconfigurator implements ReconfigurableProperty
 			);
 		}
 
-		return true;
+		return $this->web_set_ssl(
+			$hostname,
+			Mode::fromPreference(
+				\Preferences::factory($this->getAuthContext())
+			)->value
+		);
 	}
 
 
 }
-
