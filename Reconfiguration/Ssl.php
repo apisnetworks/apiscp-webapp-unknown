@@ -30,7 +30,7 @@ class Ssl extends Reconfigurator implements ReconfigurableProperty
 		}
 
 		if (!$val) {
-			$this->web_remove_ssl($hostname);
+			\Error_Reporter::silence(fn() => $this->web_remove_ssl($hostname));
 			// detach hostname from cert + reissue?
 			return true;
 		}
